@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.log
+keyValStore/
+client/assets/node_modules/
+.vscode/
+src/chaincode/debug
+src/chaincode/chaincode_example
