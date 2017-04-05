@@ -33,18 +33,43 @@
       </div>
     </nav>
     
+
     <div class="container">
 
       <div class="starter-template">
-        <h1>Blockchain demo using NodeJS backend</h1>
+        <h1>Money-chain</h1>
         <!--<p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>-->
       </div>
 
-      <div class="row">
+      <div class="row" style="padding-bottom: 20px;">
+      <div class="col-md-2"></div>
+      <div class="col-md-10 col-xs-offset-5">
+        <h3>Funds Transfer</h3>
       </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-5">
+        <form class="form-horizontal" method="POST" action="transferfunds">
+          <div class="form-group">
+            <label for="accountname">Source Account Name</label>
+            <input type="text" class="form-control" id="source" name="source">
+          </div>
+          <div class="form-group">
+            <label for="accountname">Destination Account Name</label>
+            <input type="text" class="form-control" id="destination" name="destination">
+          </div>
+          <div class="form-group">
+            <label for="initialbalance">Transfer Amount $</label>
+            <input type="text" class="form-control" id="amount" name="amount">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
 
     </div><!-- /.container -->
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

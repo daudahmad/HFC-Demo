@@ -75,56 +75,91 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	if function == "delete" {
 		// Deletes an entity from its state
 		return t.delete(stub, args)
+	} else if function == "open_account" {
+		// Deletes an entity from its state
+		return t.openAccount(stub, args)
+	} else if function == "transfer_funds" {
+		// Deletes an entity from its state
+		return t.transferFunds(stub, args)
 	}
 
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
-	var X int          // Transaction value
+	return nil, nil
+}
+
+func (t *SimpleChaincode) transferFunds(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var source, dest string            // Entities
+	var sourceBalance, destBalance int // Asset holdings
+	var transferAmount int             // Transaction value
 	var err error
 
 	if len(args) != 3 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 3")
 	}
 
-	A = args[0]
-	B = args[1]
+	source = args[0] //1st argument is source account name
+	dest = args[1]   //2nd argument is the destination account name
 
 	// Get the state from the ledger
-	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := stub.GetState(A)
+	Avalbytes, err := stub.GetState(source)
 	if err != nil {
 		return nil, errors.New("Failed to get state")
 	}
 	if Avalbytes == nil {
 		return nil, errors.New("Entity not found")
 	}
-	Aval, _ = strconv.Atoi(string(Avalbytes))
+	sourceBalance, _ = strconv.Atoi(string(Avalbytes))
 
-	Bvalbytes, err := stub.GetState(B)
+	Bvalbytes, err := stub.GetState(dest)
 	if err != nil {
 		return nil, errors.New("Failed to get state")
 	}
 	if Bvalbytes == nil {
 		return nil, errors.New("Entity not found")
 	}
-	Bval, _ = strconv.Atoi(string(Bvalbytes))
+	destBalance, _ = strconv.Atoi(string(Bvalbytes))
 
 	// Perform the execution
-	X, err = strconv.Atoi(args[2])
+	transferAmount, err = strconv.Atoi(args[2])
 	if err != nil {
 		return nil, errors.New("Invalid transaction amount, expecting a integer value")
 	}
-	Aval = Aval - X
-	Bval = Bval + X
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+	sourceBalance = sourceBalance - transferAmount
+	destBalance = destBalance + transferAmount
+	fmt.Printf("Aval = %d, Bval = %d\n", sourceBalance, destBalance)
 
 	// Write the state back to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	err = stub.PutState(source, []byte(strconv.Itoa(sourceBalance)))
 	if err != nil {
 		return nil, err
 	}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	err = stub.PutState(dest, []byte(strconv.Itoa(destBalance)))
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
+// Creates an entity from state
+func (t *SimpleChaincode) openAccount(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var A string // Entities
+	var Aval int // Asset holdings
+	var err error
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2")
+	}
+
+	A = args[0]
+	Aval, err = strconv.Atoi(args[1])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for initial account balance")
+	}
+	fmt.Printf("Aval = %d\n", Aval)
+
+	// Write the state to the ledger
+	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
 	if err != nil {
 		return nil, err
 	}

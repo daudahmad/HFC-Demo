@@ -1,0 +1,19 @@
+include head.pug
+.container
+  .starter-template
+    h1 Money-Chain
+  .row(style='padding-bottom: 20px;')
+    .col-md-2
+    .col-md-10.col-xs-offset-5
+      h3 Open new account
+  .row
+    .col-md-2
+    .col-md-5
+      form.form-horizontal(method='POST', action='openaccount')
+        .form-group
+          label(for='accountname') New Account Name
+          input#accountname.form-control(type='text', name='accountname')
+        .form-group
+          label(for='initialbalance') Initial balance amount $
+          input#initialbalance.form-control(type='text', name='initialbalance')
+        button.btn.btn-primary(type='submit') Submit
